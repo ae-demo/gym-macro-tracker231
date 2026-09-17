@@ -38,11 +38,11 @@
     },
     {
       "id": "REQ-005",
-      "statement": "A Trainee can search a nutrition database while logging a food instead of typing macros themselves.",
+      "statement": "A Trainee can manually enter a food's calories and macros when logging it.",
       "stories": [5],
       "criteria": [
-        { "id": "AC-005-a", "must": "A Trainee can search the nutrition catalog by food name", "method": "e2e" },
-        { "id": "AC-005-b", "must": "Selecting a search result pre-fills that food's macros into the log entry", "method": "e2e" }
+        { "id": "AC-005-a", "must": "A Trainee can enter calories, protein, carbs and fat by hand when logging a food", "method": "e2e" },
+        { "id": "AC-005-b", "must": "The manually entered macros are what is saved and shown back for that entry", "method": "e2e" }
       ]
     },
     {

@@ -12,14 +12,6 @@
       ]
     },
     {
-      "resource": "food-catalog",
-      "component": "gym-tracker-api",
-      "description": "The shared nutrition catalog looked up while logging a food",
-      "actions": [
-        { "handle": "search", "description": "Search the nutrition catalog by name" }
-      ]
-    },
-    {
       "resource": "food-logs",
       "component": "gym-tracker-api",
       "description": "Logged meals and their macros",

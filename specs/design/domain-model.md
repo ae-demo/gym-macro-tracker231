@@ -39,7 +39,6 @@ erDiagram
         int proteinGrams
         int carbsGrams
         int fatGrams
-        string source
     }
     WORKOUT_LOG {
         string id PK

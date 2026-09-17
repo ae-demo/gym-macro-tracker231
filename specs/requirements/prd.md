@@ -37,8 +37,9 @@ targets, so that I have a personal goal to track against.
 my tracking stays relevant.
 4. As a Trainee, I want to log a food I ate with its macros, so that my daily
 totals stay accurate.
-5. As a Trainee, I want to search a nutrition database while logging a food, so
-that I don't have to look up or type in macros for common foods myself.
+5. As a Trainee, I want to manually enter a food's calories and macros when I
+log it, so that I can record exactly what I ate without relying on any
+external database.
 6. As a Trainee, I want to log a workout — the exercises I did, with sets,
 reps and weight (or duration for cardio) — so that my training is tracked
 alongside my nutrition.
@@ -65,9 +66,9 @@ on it.
 
 - **Sign-in**: every user (Trainee or Coach) signs in via SSO through Thunder,
 the platform identity provider.
-- **Nutrition lookup**: food search and macro data during logging is backed by
-the organization's registered nutrition-service (a food-data lookup used for
-recipes and logged foods), rather than a hand-rolled food database.
+- **Nutrition data is manually entered**: a Trainee types in a food's calories
+and macros themselves when logging it; the product integrates no external
+nutrition database.
 - **Targets are self-set**: a Trainee always enters their own daily
 calorie/macro targets directly; the product does not calculate targets from
 body-profile data.

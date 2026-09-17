@@ -16,16 +16,16 @@ screen TraineeDashboard "Trainee's daily macro summary vs targets"
       row "12:30 PM | Chicken salad | 420"
       row "8:00 AM | Oatmeal | 310"
 
-screen LogFood "Search the nutrition catalog and log a meal"
+screen LogFood "Manually enter a food's macros and log it"
   navbar "Gym Macro Tracker"
   sidebar "Dashboard -> TraineeDashboard | Food Log -> FoodLog | Workouts -> WorkoutLog | History -> WeeklyHistory | Coach -> CoachLinkScreen | Feedback -> FeedbackInbox"
   heading "Log a Food"
-  search "Search foods (e.g. chicken breast)"
-  table "Food | Calories | Protein | Carbs | Fat"
-    row "Chicken breast (100g) | 165 | 31g | 0g | 3.6g"
-    row "Brown rice (1 cup) | 216 | 5g | 45g | 1.8g"
-  card "Selected: Chicken breast"
-    input "Quantity (servings)"
+  input "Food name"
+  row
+    input "Calories"
+    input "Protein (g)"
+    input "Carbs (g)"
+    input "Fat (g)"
   row
     button "Cancel" -> TraineeDashboard
     right
