@@ -30,36 +30,36 @@ Trainee's targets or edits their logs.
 ## User Stories
 
 1. As a Trainee, I want to sign in securely, so that my nutrition and workout
- data is private to me.
+data is private to me.
 2. As a Trainee, I want to set my daily calorie and macro (protein, carbs, fat)
- targets, so that I have a personal goal to track against.
+targets, so that I have a personal goal to track against.
 3. As a Trainee, I want to change my targets whenever my goal changes, so that
- my tracking stays relevant.
+my tracking stays relevant.
 4. As a Trainee, I want to log a food I ate with its macros, so that my daily
- totals stay accurate.
+totals stay accurate.
 5. As a Trainee, I want to search a nutrition database while logging a food, so
- that I don't have to look up or type in macros for common foods myself.
+that I don't have to look up or type in macros for common foods myself.
 6. As a Trainee, I want to log a workout — the exercises I did, with sets,
- reps and weight (or duration for cardio) — so that my training is tracked
- alongside my nutrition.
+reps and weight (or duration for cardio) — so that my training is tracked
+alongside my nutrition.
 7. As a Trainee, I want to see a daily summary of my macros logged so far
- against my targets, so that I know how much room I have left today.
+against my targets, so that I know how much room I have left today.
 8. As a Trainee, I want to see a weekly view of my nutrition and workout
- history, so that I can spot trends over time.
+history, so that I can spot trends over time.
 9. As a Trainee, I want to invite a Coach to oversee my progress, so that they
- can see my logs without me exporting anything.
+can see my logs without me exporting anything.
 10. As a Trainee, I want to revoke a Coach's access, so that I control who can
- see my data.
+see my data.
 11. As a Coach, I want to accept a Trainee's invite, so that I start overseeing
- them.
+them.
 12. As a Coach, I want to see a list of the Trainees I oversee, so that I can
- choose whose progress to review.
+choose whose progress to review.
 13. As a Coach, I want to view a linked Trainee's logged meals, workouts, and
- progress against their targets, so that I can assess how they're doing.
+progress against their targets, so that I can assess how they're doing.
 14. As a Coach, I want to leave feedback on a Trainee's day or log entry, so
- that I can guide them.
+that I can guide them.
 15. As a Trainee, I want to see feedback my Coach has left, so that I can act
- on it.
+on it.
 
 ## Product Decisions
 
@@ -71,12 +71,12 @@ recipes and logged foods), rather than a hand-rolled food database.
 - **Targets are self-set**: a Trainee always enters their own daily
 calorie/macro targets directly; the product does not calculate targets from
 body-profile data.
-- **Coach linking is invite-based** *assumed*: a Trainee generates an invite
-that a Coach accepts to become linked; there is no open marketplace of
-coaches to browse.
-- **Workout logging shape** *assumed*: a workout is a set of exercises, each
-with either sets/reps/weight (strength) or a duration (cardio) — no
-exercise-library browsing or video guidance in this product.
+- **Coach linking is invite-based**: a Trainee generates an invite that a
+Coach accepts to become linked; there is no open marketplace of coaches to
+browse.
+- **Workout logging shape**: a workout is a set of exercises, each with either
+sets/reps/weight (strength) or a duration (cardio) — no exercise-library
+browsing or video guidance in this product.
 - **No coach-initiated notifications in this version** *assumed*: a Trainee
 checks their own app for Coach feedback; there is no push/email alert when
 feedback is left.
