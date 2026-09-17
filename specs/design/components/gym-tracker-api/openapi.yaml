@@ -1,0 +1,534 @@
+openapi: 3.0.3
+info:
+  title: Gym Macro Tracker API
+  version: 0.1.0
+servers:
+  - url: /
+security:
+  - oauth2: []
+paths:
+  /me:
+    get:
+      operationId: getMe
+      summary: The caller's profile (Trainee or Coach)
+      responses:
+        '200':
+          description: The caller's profile
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Profile' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /me/targets:
+    get:
+      operationId: listMyTargets
+      summary: The caller's own macro targets, most recent first
+      security: [{ oauth2: [targets:read] }]
+      parameters:
+        - { name: limit, in: query, schema: { type: integer, default: 20, maximum: 100 } }
+        - { name: offset, in: query, schema: { type: integer, default: 0 } }
+      responses:
+        '200':
+          description: Macro targets
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MacroTargetPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: setMyTarget
+      summary: Set a new active macro target for the caller
+      security: [{ oauth2: [targets:set] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/NewMacroTarget' }
+      responses:
+        '201':
+          description: Target created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MacroTarget' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /food-catalog/search:
+    get:
+      operationId: searchFoodCatalog
+      summary: Search the nutrition catalog for a food by name
+      security: [{ oauth2: [food-catalog:search] }]
+      parameters:
+        - { name: query, in: query, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Matching foods with their macros
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/FoodCatalogEntry' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /me/food-logs:
+    get:
+      operationId: listMyFoodLogs
+      summary: The caller's own logged food entries
+      security: [{ oauth2: [food-logs:read] }]
+      parameters:
+        - { name: limit, in: query, schema: { type: integer, default: 20, maximum: 100 } }
+        - { name: offset, in: query, schema: { type: integer, default: 0 } }
+        - { name: from, in: query, schema: { type: string, format: date } }
+        - { name: to, in: query, schema: { type: string, format: date } }
+      responses:
+        '200':
+          description: Food log entries
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FoodLogEntryPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: logMyFood
+      summary: Log a food entry for the caller
+      security: [{ oauth2: [food-logs:log] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/NewFoodLogEntry' }
+      responses:
+        '201':
+          description: Food entry logged
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FoodLogEntry' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /me/workouts:
+    get:
+      operationId: listMyWorkouts
+      summary: The caller's own logged workouts
+      security: [{ oauth2: [workouts:read] }]
+      parameters:
+        - { name: limit, in: query, schema: { type: integer, default: 20, maximum: 100 } }
+        - { name: offset, in: query, schema: { type: integer, default: 0 } }
+        - { name: from, in: query, schema: { type: string, format: date } }
+        - { name: to, in: query, schema: { type: string, format: date } }
+      responses:
+        '200':
+          description: Workout logs
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/WorkoutLogPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: logMyWorkout
+      summary: Log a workout with its exercises for the caller
+      security: [{ oauth2: [workouts:log] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/NewWorkoutLog' }
+      responses:
+        '201':
+          description: Workout logged
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/WorkoutLog' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /me/workouts/{workoutId}:
+    get:
+      operationId: getMyWorkout
+      summary: The caller's own workout log detail
+      security: [{ oauth2: [workouts:read] }]
+      parameters:
+        - { name: workoutId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Workout log
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/WorkoutLog' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /me/coach-invites:
+    post:
+      operationId: createCoachInvite
+      summary: Generate an invite for a Coach to accept
+      security: [{ oauth2: [coach-links:invite] }]
+      responses:
+        '201':
+          description: Invite created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CoachInvite' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /me/coach-links:
+    get:
+      operationId: listMyCoachLinks
+      summary: The caller's own coach links (a Trainee's coach, or a Coach's trainees)
+      security: [{ oauth2: [coach-links:read] }]
+      parameters:
+        - { name: limit, in: query, schema: { type: integer, default: 20, maximum: 100 } }
+        - { name: offset, in: query, schema: { type: integer, default: 0 } }
+      responses:
+        '200':
+          description: Coach links
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CoachLinkPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: acceptCoachInvite
+      summary: Accept a Trainee's invite code and become linked
+      security: [{ oauth2: [coach-links:accept] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              properties:
+                code: { type: string }
+      responses:
+        '201':
+          description: Coach link created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CoachLink' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /me/coach-links/{linkId}:
+    delete:
+      operationId: revokeCoachLink
+      summary: Revoke the caller's own coach link
+      security: [{ oauth2: [coach-links:revoke] }]
+      parameters:
+        - { name: linkId, in: path, required: true, schema: { type: string } }
+      responses:
+        '204': { description: Link revoked }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /me/trainees/{traineeId}/targets:
+    get:
+      operationId: getLinkedTraineeTargets
+      summary: A linked Trainee's macro targets
+      security: [{ oauth2: [targets:read-linked] }]
+      parameters:
+        - { name: traineeId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Macro targets
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MacroTargetPage' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /me/trainees/{traineeId}/food-logs:
+    get:
+      operationId: getLinkedTraineeFoodLogs
+      summary: A linked Trainee's food log entries
+      security: [{ oauth2: [food-logs:read-linked] }]
+      parameters:
+        - { name: traineeId, in: path, required: true, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer, default: 20, maximum: 100 } }
+        - { name: offset, in: query, schema: { type: integer, default: 0 } }
+      responses:
+        '200':
+          description: Food log entries
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FoodLogEntryPage' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /me/trainees/{traineeId}/workouts:
+    get:
+      operationId: getLinkedTraineeWorkouts
+      summary: A linked Trainee's workout logs
+      security: [{ oauth2: [workouts:read-linked] }]
+      parameters:
+        - { name: traineeId, in: path, required: true, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer, default: 20, maximum: 100 } }
+        - { name: offset, in: query, schema: { type: integer, default: 0 } }
+      responses:
+        '200':
+          description: Workout logs
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/WorkoutLogPage' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /me/trainees/{traineeId}/feedback:
+    get:
+      operationId: listFeedbackGivenToTrainee
+      summary: Feedback the caller has given a linked Trainee
+      security: [{ oauth2: [feedback:read-given] }]
+      parameters:
+        - { name: traineeId, in: path, required: true, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer, default: 20, maximum: 100 } }
+        - { name: offset, in: query, schema: { type: integer, default: 0 } }
+      responses:
+        '200':
+          description: Feedback entries
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FeedbackPage' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createFeedbackForTrainee
+      summary: Leave feedback for a linked Trainee
+      security: [{ oauth2: [feedback:create] }]
+      parameters:
+        - { name: traineeId, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/NewFeedback' }
+      responses:
+        '201':
+          description: Feedback created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Feedback' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /me/feedback:
+    get:
+      operationId: listMyFeedback
+      summary: The caller's own received feedback
+      security: [{ oauth2: [feedback:read] }]
+      parameters:
+        - { name: limit, in: query, schema: { type: integer, default: 20, maximum: 100 } }
+        - { name: offset, in: query, schema: { type: integer, default: 0 } }
+      responses:
+        '200':
+          description: Feedback entries
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FeedbackPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: /oauth2/authorize
+          tokenUrl: /oauth2/token
+          scopes:
+            targets:read: The caller's own targets
+            targets:set: Create or update the caller's own targets
+            targets:read-linked: A linked Trainee's targets
+            food-catalog:search: Search the nutrition catalog by name
+            food-logs:log: Log a food entry
+            food-logs:read: The caller's own food log entries
+            food-logs:read-linked: A linked Trainee's food log entries
+            workouts:log: Log a workout with its exercises
+            workouts:read: The caller's own workout logs
+            workouts:read-linked: A linked Trainee's workout logs
+            coach-links:invite: Generate an invite for a Coach to accept
+            coach-links:accept: Accept a Trainee's invite and become linked
+            coach-links:revoke: Revoke the caller's own coach link
+            coach-links:read: The caller's own coach links
+            feedback:create: Leave feedback for a linked Trainee
+            feedback:read: The caller's own received feedback
+            feedback:read-given: Feedback the caller has given a linked Trainee
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Unauthorized:
+      description: Missing, invalid or insufficiently-scoped token
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+  schemas:
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: integer, description: HTTP or application error code }
+        message: { type: string, description: short human-readable label }
+        description: { type: string, description: detailed explanation }
+        moreInfo: { type: string, description: URI to documentation }
+    Profile:
+      type: object
+      required: [id, role, name]
+      properties:
+        id: { type: string }
+        role: { type: string, enum: [trainee, coach] }
+        name: { type: string }
+        email: { type: string }
+    MacroTarget:
+      type: object
+      required: [id, calories, proteinGrams, carbsGrams, fatGrams, effectiveFrom]
+      properties:
+        id: { type: string }
+        calories: { type: integer }
+        proteinGrams: { type: integer }
+        carbsGrams: { type: integer }
+        fatGrams: { type: integer }
+        effectiveFrom: { type: string, format: date }
+    NewMacroTarget:
+      type: object
+      required: [calories, proteinGrams, carbsGrams, fatGrams]
+      properties:
+        calories: { type: integer }
+        proteinGrams: { type: integer }
+        carbsGrams: { type: integer }
+        fatGrams: { type: integer }
+    MacroTargetPage:
+      type: object
+      required: [count, data]
+      properties:
+        count: { type: integer }
+        next: { type: string, nullable: true }
+        previous: { type: string, nullable: true }
+        data: { type: array, items: { $ref: '#/components/schemas/MacroTarget' } }
+    FoodCatalogEntry:
+      type: object
+      required: [name, calories, proteinGrams, carbsGrams, fatGrams]
+      properties:
+        name: { type: string }
+        calories: { type: integer }
+        proteinGrams: { type: integer }
+        carbsGrams: { type: integer }
+        fatGrams: { type: integer }
+    FoodLogEntry:
+      type: object
+      required: [id, loggedAt, foodName, calories, proteinGrams, carbsGrams, fatGrams]
+      properties:
+        id: { type: string }
+        loggedAt: { type: string, format: date-time }
+        foodName: { type: string }
+        calories: { type: integer }
+        proteinGrams: { type: integer }
+        carbsGrams: { type: integer }
+        fatGrams: { type: integer }
+        source: { type: string, description: manual or nutrition-catalog }
+    NewFoodLogEntry:
+      type: object
+      required: [foodName, calories, proteinGrams, carbsGrams, fatGrams]
+      properties:
+        foodName: { type: string }
+        calories: { type: integer }
+        proteinGrams: { type: integer }
+        carbsGrams: { type: integer }
+        fatGrams: { type: integer }
+        source: { type: string }
+        loggedAt: { type: string, format: date-time }
+    FoodLogEntryPage:
+      type: object
+      required: [count, data]
+      properties:
+        count: { type: integer }
+        next: { type: string, nullable: true }
+        previous: { type: string, nullable: true }
+        data: { type: array, items: { $ref: '#/components/schemas/FoodLogEntry' } }
+    ExerciseEntry:
+      type: object
+      required: [exerciseName]
+      properties:
+        exerciseName: { type: string }
+        sets: { type: integer }
+        reps: { type: integer }
+        weightKg: { type: number }
+        durationMinutes: { type: integer }
+    WorkoutLog:
+      type: object
+      required: [id, loggedAt, exercises]
+      properties:
+        id: { type: string }
+        loggedAt: { type: string, format: date-time }
+        notes: { type: string }
+        exercises: { type: array, items: { $ref: '#/components/schemas/ExerciseEntry' } }
+    NewWorkoutLog:
+      type: object
+      required: [exercises]
+      properties:
+        notes: { type: string }
+        loggedAt: { type: string, format: date-time }
+        exercises: { type: array, items: { $ref: '#/components/schemas/ExerciseEntry' } }
+    WorkoutLogPage:
+      type: object
+      required: [count, data]
+      properties:
+        count: { type: integer }
+        next: { type: string, nullable: true }
+        previous: { type: string, nullable: true }
+        data: { type: array, items: { $ref: '#/components/schemas/WorkoutLog' } }
+    CoachInvite:
+      type: object
+      required: [id, code, status, createdAt]
+      properties:
+        id: { type: string }
+        code: { type: string }
+        status: { type: string, enum: [pending, accepted, expired] }
+        createdAt: { type: string, format: date-time }
+    CoachLink:
+      type: object
+      required: [id, traineeId, coachId, linkedAt]
+      properties:
+        id: { type: string }
+        traineeId: { type: string }
+        traineeName: { type: string }
+        coachId: { type: string }
+        coachName: { type: string }
+        linkedAt: { type: string, format: date-time }
+    CoachLinkPage:
+      type: object
+      required: [count, data]
+      properties:
+        count: { type: integer }
+        next: { type: string, nullable: true }
+        previous: { type: string, nullable: true }
+        data: { type: array, items: { $ref: '#/components/schemas/CoachLink' } }
+    Feedback:
+      type: object
+      required: [id, message, createdAt]
+      properties:
+        id: { type: string }
+        message: { type: string }
+        createdAt: { type: string, format: date-time }
+    NewFeedback:
+      type: object
+      required: [message]
+      properties:
+        message: { type: string }
+    FeedbackPage:
+      type: object
+      required: [count, data]
+      properties:
+        count: { type: integer }
+        next: { type: string, nullable: true }
+        previous: { type: string, nullable: true }
+        data: { type: array, items: { $ref: '#/components/schemas/Feedback' } }

@@ -1,0 +1,82 @@
+{
+  "version": 3,
+  "permissions": [
+    {
+      "resource": "targets",
+      "component": "gym-tracker-api",
+      "description": "A Trainee's daily macro/calorie targets",
+      "actions": [
+        { "handle": "read", "description": "The caller's own targets" },
+        { "handle": "set", "description": "Create or update the caller's own targets" },
+        { "handle": "read-linked", "description": "A linked Trainee's targets" }
+      ]
+    },
+    {
+      "resource": "food-catalog",
+      "component": "gym-tracker-api",
+      "description": "The shared nutrition catalog looked up while logging a food",
+      "actions": [
+        { "handle": "search", "description": "Search the nutrition catalog by name" }
+      ]
+    },
+    {
+      "resource": "food-logs",
+      "component": "gym-tracker-api",
+      "description": "Logged meals and their macros",
+      "actions": [
+        { "handle": "log", "description": "Log a food entry" },
+        { "handle": "read", "description": "The caller's own food log entries" },
+        { "handle": "read-linked", "description": "A linked Trainee's food log entries" }
+      ]
+    },
+    {
+      "resource": "workouts",
+      "component": "gym-tracker-api",
+      "description": "Logged workouts and their exercises",
+      "actions": [
+        { "handle": "log", "description": "Log a workout with its exercises" },
+        { "handle": "read", "description": "The caller's own workout logs" },
+        { "handle": "read-linked", "description": "A linked Trainee's workout logs" }
+      ]
+    },
+    {
+      "resource": "coach-links",
+      "component": "gym-tracker-api",
+      "description": "Trainee-Coach invites and links",
+      "actions": [
+        { "handle": "invite", "description": "Generate an invite for a Coach to accept" },
+        { "handle": "accept", "description": "Accept a Trainee's invite and become linked" },
+        { "handle": "revoke", "description": "Revoke the caller's own coach link" },
+        { "handle": "read", "description": "The caller's own coach links (a Trainee's coach, or a Coach's trainees)" }
+      ]
+    },
+    {
+      "resource": "feedback",
+      "component": "gym-tracker-api",
+      "description": "Coach feedback on a Trainee's progress",
+      "actions": [
+        { "handle": "create", "description": "Leave feedback for a linked Trainee" },
+        { "handle": "read", "description": "The caller's own received feedback" },
+        { "handle": "read-given", "description": "Feedback the caller has given a linked Trainee" }
+      ]
+    }
+  ],
+  "groups": [],
+  "roles": [
+    {
+      "name": "Trainee",
+      "description": "Logs meals and workouts, sets personal targets, and manages a coach link.",
+      "stories": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15],
+      "grants": ["targets:read", "targets:set", "food-catalog:search", "food-logs:log", "food-logs:read", "workouts:log", "workouts:read", "coach-links:invite", "coach-links:revoke", "coach-links:read", "feedback:read"],
+      "enrolment": "self-service"
+    },
+    {
+      "name": "Coach",
+      "description": "Accepts Trainee invites and reviews linked Trainees' progress and feedback.",
+      "stories": [1, 11, 12, 13, 14],
+      "grants": ["coach-links:accept", "coach-links:read", "targets:read-linked", "food-logs:read-linked", "workouts:read-linked", "feedback:create", "feedback:read-given"],
+      "enrolment": "self-service"
+    }
+  ],
+  "testUsers": []
+}
