@@ -67,7 +67,7 @@
       "name": "Trainee",
       "description": "Logs meals and workouts, sets personal targets, and manages a coach link.",
       "stories": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15],
-      "grants": ["targets:read", "targets:set", "food-catalog:search", "food-logs:log", "food-logs:read", "workouts:log", "workouts:read", "coach-links:invite", "coach-links:revoke", "coach-links:read", "feedback:read"],
+      "grants": ["targets:read", "targets:set", "food-logs:log", "food-logs:read", "workouts:log", "workouts:read", "coach-links:invite", "coach-links:revoke", "coach-links:read", "feedback:read"],
       "enrolment": "self-service"
     },
     {

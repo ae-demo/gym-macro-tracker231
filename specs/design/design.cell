@@ -5,7 +5,6 @@ component gym-tracker-api as "Gym Macro Tracker API" service
 component gym-tracker-db as "Gym Macro Tracker DB" database
 
 east user-auth as "Thunder Auth" identity-server
-south nutrition-service as "Nutrition Service" service
 
 north -> gym-tracker-webapp
 
@@ -13,4 +12,3 @@ gym-tracker-webapp -> gym-tracker-api
 gym-tracker-webapp -> user-auth
 gym-tracker-api -> user-auth
 gym-tracker-api -> gym-tracker-db
-gym-tracker-api -> nutrition-service

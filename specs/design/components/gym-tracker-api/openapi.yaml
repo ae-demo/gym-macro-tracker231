@@ -52,28 +52,6 @@ paths:
         '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
 
-  /food-catalog/search:
-    get:
-      operationId: searchFoodCatalog
-      summary: Search the nutrition catalog for a food by name
-      security: [{ oauth2: [food-catalog:search] }]
-      parameters:
-        - { name: query, in: query, required: true, schema: { type: string } }
-      responses:
-        '200':
-          description: Matching foods with their macros
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [data]
-                properties:
-                  data:
-                    type: array
-                    items: { $ref: '#/components/schemas/FoodCatalogEntry' }
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-
   /me/food-logs:
     get:
       operationId: listMyFoodLogs
@@ -341,7 +319,6 @@ components:
             targets:read: The caller's own targets
             targets:set: Create or update the caller's own targets
             targets:read-linked: A linked Trainee's targets
-            food-catalog:search: Search the nutrition catalog by name
             food-logs:log: Log a food entry
             food-logs:read: The caller's own food log entries
             food-logs:read-linked: A linked Trainee's food log entries
@@ -414,15 +391,6 @@ components:
         next: { type: string, nullable: true }
         previous: { type: string, nullable: true }
         data: { type: array, items: { $ref: '#/components/schemas/MacroTarget' } }
-    FoodCatalogEntry:
-      type: object
-      required: [name, calories, proteinGrams, carbsGrams, fatGrams]
-      properties:
-        name: { type: string }
-        calories: { type: integer }
-        proteinGrams: { type: integer }
-        carbsGrams: { type: integer }
-        fatGrams: { type: integer }
     FoodLogEntry:
       type: object
       required: [id, loggedAt, foodName, calories, proteinGrams, carbsGrams, fatGrams]
@@ -434,7 +402,6 @@ components:
         proteinGrams: { type: integer }
         carbsGrams: { type: integer }
         fatGrams: { type: integer }
-        source: { type: string, description: manual or nutrition-catalog }
     NewFoodLogEntry:
       type: object
       required: [foodName, calories, proteinGrams, carbsGrams, fatGrams]
@@ -444,7 +411,6 @@ components:
         proteinGrams: { type: integer }
         carbsGrams: { type: integer }
         fatGrams: { type: integer }
-        source: { type: string }
         loggedAt: { type: string, format: date-time }
     FoodLogEntryPage:
       type: object

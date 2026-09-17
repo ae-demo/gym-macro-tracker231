@@ -9,10 +9,9 @@
   "exposure": "intranet",
   "dependencies": [
     { "kind": "platform-resource", "name": "gym-tracker-db", "resourceType": "postgres-cnpg" },
-    { "kind": "platform-resource", "name": "user-auth", "resourceType": "thunder-app" },
-    { "kind": "external", "name": "nutrition-service", "description": "Looks up macros for foods a Trainee searches while logging a meal." }
+    { "kind": "platform-resource", "name": "user-auth", "resourceType": "thunder-app" }
   ],
-  "description": "The backend API for the gym macro tracker: owns macro targets, food log entries, workout logs, coach invites/links and coach feedback. Persists to its own Postgres database, verifies the gateway's signed assertion for every non-public operation, and calls the nutrition-service for food macro lookups. Does not render any UI and does not itself talk to Thunder except to verify tokens.",
+  "description": "The backend API for the gym macro tracker: owns macro targets, food log entries, workout logs, coach invites/links and coach feedback. Persists to its own Postgres database and verifies the gateway's signed assertion for every non-public operation. Food macros are entered by the Trainee directly — this service does not call any external nutrition data source. Does not render any UI and does not itself talk to Thunder except to verify tokens.",
   "stories": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
   "skillsPinned": ["openapi-conventions", "ballerina", "api-management", "thunder-authentication"]
 }
